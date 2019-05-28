@@ -1,0 +1,28 @@
+package com.erycoking.MusicStore.models;
+
+import lombok.*;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Entity
+public class Artist {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "artist_id")
+    private int artistId;
+
+    @NonNull
+    @Column(name = "artist_name", nullable = false)
+    private String artistName;
+
+    @OneToMany(mappedBy ="artist",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Song> songs;
+
+}
