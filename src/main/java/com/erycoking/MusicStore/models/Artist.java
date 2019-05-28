@@ -1,5 +1,6 @@
 package com.erycoking.MusicStore.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Artist {
     @Column(name = "artist_name", nullable = false)
     private String artistName;
 
+    @JsonIgnore
     @OneToMany(mappedBy ="artist",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Song> songs;
 

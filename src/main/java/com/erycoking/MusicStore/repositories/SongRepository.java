@@ -4,12 +4,12 @@ import com.erycoking.MusicStore.models.Album;
 import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.models.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
 
-@Repository
+@RepositoryRestResource
 public interface SongRepository extends JpaRepository<Song, Integer> {
 
     /**
