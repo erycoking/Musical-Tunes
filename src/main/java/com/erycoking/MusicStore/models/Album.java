@@ -19,7 +19,7 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "album_id")
-    private long albumId;
+    private int albumId;
 
     @NonNull
     @Column(name = "album_name", nullable = false)

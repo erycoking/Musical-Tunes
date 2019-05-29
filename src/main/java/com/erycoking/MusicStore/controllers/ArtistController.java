@@ -35,33 +35,37 @@ public class ArtistController {
 
     @GetMapping("/{id}")
     ResponseEntity<?> getArtist(@PathVariable int id) {
-        Optional<Artist> group = artistService.getArtistById(id);
-        return group.map(response -> ResponseEntity.ok().body(response))
+        Optional<Artist> artist = artistService.getArtistById(id);
+        return artist.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    ResponseEntity<Artist> createArtist(@Valid @RequestBody Artist group) throws URISyntaxException {
-        log.info("Request to create group: {}", group);
-        Artist result = artistService.save(group);
-        return ResponseEntity.created(new URI("/api/group/" + result.getArtistId()))
-                .body(result);
+    ResponseEntity<?> createArtist(@Valid @RequestBody Artist artist) throws URISyntaxException {
+        log.info("Request to create artist: {}", artist);
+        if (artistService.getArtist(artist.getArtistName()) != null){
+            return ResponseEntity.badRequest().body("Song already Exists");
+        }else {
+            Artist result = artistService.save(artist);
+            return ResponseEntity.created(new URI("/api/artist/" + result.getArtistId()))
+                    .body(result);
+        }
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Artist> updateArtist(@PathVariable int id, @Valid @RequestBody Artist group){
+    ResponseEntity<Artist> updateArtist(@PathVariable int id, @Valid @RequestBody Artist artist){
         if (artistService.getArtistById(id) == null){
             return ResponseEntity.notFound().build();
         }else {
-            log.info("Request to update group: {}", group);
-            Artist result = artistService.save(group);
+            log.info("Request to update artist: {}", artist);
+            Artist result = artistService.save(artist);
             return ResponseEntity.ok().body(result);
         }
     }
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteArtist(@PathVariable int id){
-        log.info("Request to delete group: {}", id);
+        log.info("Request to delete artist: {}", id);
         artistService.deleteArtist(id);
         return ResponseEntity.ok().build();
     }

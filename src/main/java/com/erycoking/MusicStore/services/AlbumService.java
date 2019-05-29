@@ -1,11 +1,7 @@
 package com.erycoking.MusicStore.services;
 
 import com.erycoking.MusicStore.models.Album;
-import com.erycoking.MusicStore.models.Artist;
-import com.erycoking.MusicStore.models.Song;
 import com.erycoking.MusicStore.repositories.AlbumRepository;
-import com.erycoking.MusicStore.repositories.ArtistRepository;
-import com.erycoking.MusicStore.repositories.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

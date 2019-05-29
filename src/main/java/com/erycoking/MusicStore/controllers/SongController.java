@@ -35,33 +35,37 @@ public class SongController {
 
     @GetMapping("/{id}")
     ResponseEntity<?> getSong(@PathVariable int id) {
-        Optional<Song> group = songService.getSongById(id);
-        return group.map(response -> ResponseEntity.ok().body(response))
+        Optional<Song> song = songService.getSongById(id);
+        return song.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    ResponseEntity<Song> createSong(@Valid @RequestBody Song group) throws URISyntaxException {
-        log.info("Request to create group: {}", group);
-        Song result = songService.save(group);
-        return ResponseEntity.created(new URI("/api/group/" + result.getSongId()))
-                .body(result);
+    ResponseEntity<?> createSong(@Valid @RequestBody Song song) throws URISyntaxException {
+        log.info("Request to create song: {}", song);
+        if(songService.getSong(song.getSongName()) != null){
+            return ResponseEntity.badRequest().body("Song already Exists");
+        }else {
+            Song result = songService.save(song);
+            return ResponseEntity.created(new URI("/api/song/" + result.getSongId()))
+                    .body(result);
+        }
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateSong(@PathVariable int id, @Valid @RequestBody Song group){
+    ResponseEntity<?> updateSong(@PathVariable int id, @Valid @RequestBody Song song){
         if (songService.getSongById(id) == null){
             return ResponseEntity.notFound().build();
         }else{
-            log.info("Request to update group: {}", group);
-            Song result = songService.save(group);
+            log.info("Request to update song: {}", song);
+            Song result = songService.save(song);
             return ResponseEntity.ok().body(result);
         }
     }
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteSong(@PathVariable int id){
-        log.info("Request to delete group: {}", id);
+        log.info("Request to delete song: {}", id);
         songService.deleteSong(id);
         return ResponseEntity.ok().build();
     }

@@ -37,33 +37,37 @@ public class AlbumController {
 
     @GetMapping("/{id}")
     ResponseEntity<?> getAlbum(@PathVariable int id) {
-        Optional<Album> group = albumService.getAlbumById(id);
-        return group.map(response -> ResponseEntity.ok().body(response))
+        Optional<Album> album = albumService.getAlbumById(id);
+        return album.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    ResponseEntity<Album> createAlbum(@Valid @RequestBody Album group) throws URISyntaxException {
-        log.info("Request to create group: {}", group);
-        Album result = albumService.save(group);
-        return ResponseEntity.created(new URI("/api/group/" + result.getAlbumId()))
-                .body(result);
+    ResponseEntity<?> createAlbum(@Valid @RequestBody Album album) throws URISyntaxException {
+        log.info("Request to create album: {}", album);
+        if (albumService.getAlbum(album.getAlbumName()) != null){
+            return ResponseEntity.badRequest().body("Song already Exists");
+        }else {
+            Album result = albumService.save(album);
+            return ResponseEntity.created(new URI("/api/album/" + result.getAlbumId()))
+                    .body(result);
+        }
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Album> updateAlbum(@PathVariable int id, @Valid @RequestBody Album group){
+    ResponseEntity<Album> updateAlbum(@PathVariable int id, @Valid @RequestBody Album album){
         if (albumService.getAlbumById(id) == null){
             return ResponseEntity.notFound().build();
         }else {
-            log.info("Request to update group: {}", group);
-            Album result = albumService.save(group);
+            log.info("Request to update album: {}", album);
+            Album result = albumService.save(album);
             return ResponseEntity.ok().body(result);
         }
     }
 
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteAlbum(@PathVariable int id){
-        log.info("Request to delete group: {}", id);
+        log.info("Request to delete album: {}", id);
         albumService.deleteAlbum(id);
         return ResponseEntity.ok().build();
     }
