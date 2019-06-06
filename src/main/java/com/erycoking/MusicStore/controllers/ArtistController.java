@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -33,11 +34,38 @@ public class ArtistController {
         return artistService.getAllArtist();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[\\d]+}")
     ResponseEntity<?> getArtist(@PathVariable int id) {
         Optional<Artist> artist = artistService.getArtistById(id);
         return artist.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{name:[a-z]+}")
+    ResponseEntity<?> getArtist(@PathVariable String name) {
+        Artist artist = artistService.getArtist(name);
+        if(artist == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(artist);
+    }
+
+    @GetMapping("/{name}/artist")
+    ResponseEntity<?> getAllArtistByName(@PathVariable String name) {
+        List<Artist> artist = artistService.getAllArtistByName(name);
+        if(artist == null || artist.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(artist);
+    }
+
+    @GetMapping("/{name}/songs")
+    ResponseEntity<?> getAllArtistBySong(@PathVariable String name) {
+        List<Artist> artist = artistService.getAllArtistBySong(name);
+        if(artist == null || artist.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(artist);
     }
 
     @PostMapping

@@ -1,7 +1,5 @@
 package com.erycoking.MusicStore.services;
 
-import com.erycoking.MusicStore.models.Album;
-import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.repositories.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +26,12 @@ public class ArtistService {
         return artistRepository.findAll();
     }
 
-    public List<Artist> getAllArtistByName(String name){
+    public List<Artist> getAllArtistBySong(String name){
         return artistRepository.findBySongsContaining(name);
+    }
+
+    public List<Artist> getAllArtistByName(String name){
+        return artistRepository.findAllByArtistName(name);
     }
 
     public Artist save(Artist song){

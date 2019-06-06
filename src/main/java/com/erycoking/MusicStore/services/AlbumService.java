@@ -18,6 +18,7 @@ public class AlbumService {
         return albumRepository.findById(albumId);
     }
 
+
     public  Album getAlbum(String name){
         return albumRepository.findByAlbumName(name);
     }

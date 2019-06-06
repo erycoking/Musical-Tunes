@@ -25,7 +25,7 @@ public class Album {
     @Column(name = "album_name", nullable = false)
     private String albumName;
 
-    @OneToMany(mappedBy ="album",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="album",  fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Song> songs;
 
 }

@@ -4,42 +4,58 @@ import com.erycoking.MusicStore.models.Album;
 import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.models.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
-@RepositoryRestResource
+@Repository
 public interface SongRepository extends JpaRepository<Song, Integer> {
+
+    @Query("SELECT p FROM Song p LEFT JOIN FETCH p.artist")
+    List<Song> findAll();
+
+    @Query(value = "select s from Song s join fetch s.artist where s.songId = :id")
+    Optional<Song> findById(@Param("id") int id);
 
     /**
      * find song by name
      * @param name
      * @return a List of songs
      */
+    @Query(value = "select s from Song s join fetch s.artist where s.songName LIKE %:name%")
     List<Song> findAllBySongName(String name);
 
     /**
-     * find a particular song using its namr
+     * find a particular song using its name
      * @param name
      * @return song
      */
+    @Query(value = "select s from Song s join fetch s.artist where s.songName = :name")
     Song findBySongName(String name);
 
     /**
      * find by Artist
-     * @param artist
+     * @param name
      * @return list of songs
      */
-    List<Song> findAllByArtist(Artist artist);
+    @Query(value = "select s from Song s join fetch s.artist where s.artist.artistName LIKE %:name%")
+    List<Song> findAllByArtist_ArtistName(String name);
+
+    @Query(value = "select s from Song s join fetch s.artist a where a.artistId = :artistId")
     List<Song> findAllByArtist_ArtistId(int artistId);
 
     /**
      * find by Albums
-     * @param album
+     * @param name
      * @return list of songs
      */
-    List<Song> findAllByAlbum(Album album);
+    @Query(value = "select s from Song s join fetch s.artist where s.album.albumName LIKE %:name%")
+    List<Song> findAllByAlbum_AlbumName(@Param("name") String name);
+    @Query(value = "select s from Song s join fetch s.artist where s.album.albumId = :albumId")
     List<Song> findAllByAlbum_AlbumId(int albumId);
 
 }

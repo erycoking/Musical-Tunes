@@ -24,7 +24,7 @@ public class Artist {
     private String artistName;
 
     @JsonIgnore
-    @OneToMany(mappedBy ="artist",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="artist",  fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Song> songs;
 
 }

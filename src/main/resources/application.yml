@@ -14,10 +14,16 @@ spring:
 
     hibernate:
       ddl-auto: update
+      use-new-id-generator-mappings: true
     show-sql: true
     format-sql: true
     properties:
       hibernate:
+        type: trace
         temp:
           # Disable feature detection by this undocumented parameter. Check the org.hibernate.engine.jdbc.internal.JdbcServiceImpl.configure method for more details.
           use_jdbc_metadata_defaults: false
+        format-sql: true
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -35,11 +36,29 @@ public class AlbumController {
         return albumService.getAllAlbum();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[\\d]+}")
     ResponseEntity<?> getAlbum(@PathVariable int id) {
         Optional<Album> album = albumService.getAlbumById(id);
         return album.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{name:[a-z]+}")
+    ResponseEntity<?> getAlbumByName(@PathVariable String name) {
+        Album album = albumService.getAlbum(name);
+        if (album == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(album);
+    }
+
+    @GetMapping("/{name}/album")
+    ResponseEntity<?> getAllAlbumByName(@PathVariable String name) {
+        List<Album> album = albumService.getAllAlbumByName(name);
+        if (album == null || album.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(album);
     }
 
     @PostMapping

@@ -16,6 +16,8 @@ public class SongService {
     @Autowired
     private SongRepository songRepository;
 
+
+
     public Optional<Song> getSongById(int artistId){
         return songRepository.findById(artistId);
     }
@@ -32,16 +34,16 @@ public class SongService {
         return songRepository.findAllBySongName(name);
     }
 
-    public List<Song> getAllByArtist(Artist artist){
-        return songRepository.findAllByArtist(artist);
+    public List<Song> getAllByArtistName(String artist){
+        return songRepository.findAllByArtist_ArtistName(artist);
     }
 
     public List<Song> getAllByArtistId(int artistId){
         return songRepository.findAllByArtist_ArtistId(artistId);
     }
 
-    public List<Song> getAllByAlbum(Album album){
-        return songRepository.findAllByAlbum(album);
+    public List<Song> getAllByAlbumName(String album){
+        return songRepository.findAllByAlbum_AlbumName(album);
     }
 
     public List<Song> getAllByAlbumId(int albumId){
