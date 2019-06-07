@@ -46,4 +46,8 @@ public class AlbumService {
     public void deleteAlbum(Album song){
         albumRepository.delete(song);
     }
+
+    public void deleteAllAlbum(){
+        albumRepository.deleteAll();
+    }
 }

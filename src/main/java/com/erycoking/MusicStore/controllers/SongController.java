@@ -1,15 +1,26 @@
 package com.erycoking.MusicStore.controllers;
 
+import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.models.Song;
+import com.erycoking.MusicStore.services.ArtistService;
 import com.erycoking.MusicStore.services.SongService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -23,10 +34,14 @@ public class SongController {
 
     private final Logger log = LoggerFactory.getLogger(SongController.class);
     private SongService songService;
+    private ArtistService artistService;
+    private ServletContext context;
 
     @Autowired
-    public SongController(SongService songService) {
+    public SongController(SongService songService, ArtistService artistService, ServletContext servletContext) {
         this.songService = songService;
+        this.artistService = artistService;
+        this.context = servletContext;
     }
 
     @GetMapping
@@ -95,15 +110,51 @@ public class SongController {
         return ResponseEntity.ok().body(song);
     }
 
-    @PostMapping
-    ResponseEntity<?> createSong(@Valid @RequestBody Song song) throws URISyntaxException {
-        log.info("Request to create song: {}", song);
-        if(songService.getSong(song.getSongName()) != null){
-            return ResponseEntity.badRequest().body("Song already Exists");
+    @PostMapping(headers=("content-type=multipart/*"))
+    ResponseEntity<?> createSong(@RequestParam("song") MultipartFile inputFile,
+                                 @RequestParam("type") String type,
+                                 @RequestParam("artist") String artist) throws URISyntaxException {
+        HttpHeaders headers = new HttpHeaders();
+
+        if (!inputFile.isEmpty()) {
+            try {
+                String songName = songService.storeFile(inputFile);
+
+                if(songService.getSong(songName) == null){
+                    String fileDownLoadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path("/songs/downloads/")
+                            .path(songName)
+                            .toUriString();
+
+                    Song result;
+                    Artist artist1;
+                    if ((artist1 = artistService.getArtist(artist)) != null) {
+                        result = songService.save(new Song(
+                                songName, fileDownLoadUri, inputFile.getContentType(),
+                                inputFile.getSize(), type, artist1
+                        ));
+                    }else {
+                        result = songService.save(new Song(
+                                songName, fileDownLoadUri, inputFile.getContentType(),
+                                inputFile.getSize(), type, new Artist(artist)
+                        ));
+                    }
+
+                    log.info("File Uploaded: {}", songName);
+                    headers.add("File Uploaded Successfully - ", inputFile.getOriginalFilename());
+
+                    return ResponseEntity.created(new URI("/api/song/" + result.getSongId()))
+                            .headers(headers)
+                            .body(result);
+                }else {
+                    return ResponseEntity.badRequest().body("Song already Exists");
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                return ResponseEntity.badRequest().build();
+            }
         }else {
-            Song result = songService.save(song);
-            return ResponseEntity.created(new URI("/api/song/" + result.getSongId()))
-                    .body(result);
+            return ResponseEntity.badRequest().body("Song is required");
         }
     }
 
@@ -123,5 +174,29 @@ public class SongController {
         log.info("Request to delete song: {}", id);
         songService.deleteSong(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/downloads/{fileName:.+}")
+    ResponseEntity<Resource> downloadFile(@PathVariable("fileName") String fileName, HttpServletRequest request){
+//        Load file as Resource
+        Resource resource = songService.loadFileAsResource(fileName);
+
+//        try to determine files content-type
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        }catch (IOException ex){
+            log.info("Could not determine file type.");
+        }
+
+//        fallback to the default content-type if type could not be determined
+        if (contentType == null){
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }

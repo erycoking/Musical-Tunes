@@ -21,6 +21,7 @@ public class Seeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+//        albumService.deleteAllAlbum();
         Album album1 = new Album("kings");
         album1.setSongs(
                 Arrays.asList(
