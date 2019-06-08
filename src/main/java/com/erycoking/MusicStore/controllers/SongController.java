@@ -1,9 +1,13 @@
 package com.erycoking.MusicStore.controllers;
 
+import com.erycoking.MusicStore.exception.MyFileNotFoundException;
 import com.erycoking.MusicStore.models.Artist;
+import com.erycoking.MusicStore.models.PlayList;
 import com.erycoking.MusicStore.models.Song;
 import com.erycoking.MusicStore.services.ArtistService;
+import com.erycoking.MusicStore.services.PlayListService;
 import com.erycoking.MusicStore.services.SongService;
+import org.hibernate.dialect.MyISAMStorageEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,12 +38,14 @@ public class SongController {
     private final Logger log = LoggerFactory.getLogger(SongController.class);
     private SongService songService;
     private ArtistService artistService;
+    private PlayListService playListService;
     private ServletContext context;
 
     @Autowired
-    public SongController(SongService songService, ArtistService artistService, ServletContext servletContext) {
+    public SongController(SongService songService, ArtistService artistService, PlayListService playListService, ServletContext servletContext) {
         this.songService = songService;
         this.artistService = artistService;
+        this.playListService = playListService;
         this.context = servletContext;
     }
 
@@ -92,22 +97,31 @@ public class SongController {
         return ResponseEntity.ok().body(song);
     }
 
-    @GetMapping("/{id:[\\d]+}/album")
-    ResponseEntity<?> getSongByAlbumId(@PathVariable int id) {
-        List<Song> song = songService.getAllByAlbumId(id);
-        if(song == null){
-            return ResponseEntity.notFound().build();
+    @GetMapping("/{id:[\\d]+}/playlist")
+    ResponseEntity<?> getSongByPlayListId(@PathVariable int id) {
+        Optional<PlayList> optionalPlayList = playListService.getPlayListId(id);
+        if (optionalPlayList.isPresent()){
+            List<Song> song = optionalPlayList.get().getSongs();
+            if(song == null || song.isEmpty()) {
+                return ResponseEntity.ok().body("No songs available");
+            }
+            return ResponseEntity.ok().body(song);
         }
-        return ResponseEntity.ok().body(song);
+        return ResponseEntity.notFound().build();
+
     }
 
-    @GetMapping("/{name:[a-z]+}/album")
+    @GetMapping("/{name:[a-z]+}/playlist")
     ResponseEntity<?> getSongByAlbum(@PathVariable String name) {
-        List<Song> song = songService.getAllByAlbumName(name);
-        if(song == null){
-            return ResponseEntity.notFound().build();
+        PlayList playList = playListService.getPlayList(name);
+        if (playList != null){
+            List<Song> allSongs = playList.getSongs();
+            if(allSongs == null || allSongs.isEmpty()){
+                return ResponseEntity.ok().body("No allSongs available");
+            }
+            return ResponseEntity.ok().body(allSongs);
         }
-        return ResponseEntity.ok().body(song);
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping(headers=("content-type=multipart/*"))
@@ -151,7 +165,7 @@ public class SongController {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().body(e.getMessage());
             }
         }else {
             return ResponseEntity.badRequest().body("Song is required");
@@ -164,8 +178,12 @@ public class SongController {
             return ResponseEntity.notFound().build();
         }else{
             log.info("Request to update song: {}", song);
-            Song result = songService.save(song);
-            return ResponseEntity.ok().body(result);
+            try {
+                Song result = songService.save(song);
+                return ResponseEntity.ok().body(result);
+            }catch (Exception e){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }
     }
 

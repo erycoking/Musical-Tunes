@@ -99,14 +99,6 @@ public class SongService {
         return songRepository.findAllByArtist_ArtistId(artistId);
     }
 
-    public List<Song> getAllByAlbumName(String album){
-        return songRepository.findAllByAlbum_AlbumName(album);
-    }
-
-    public List<Song> getAllByAlbumId(int albumId){
-        return songRepository.findAllByAlbum_AlbumId(albumId);
-    }
-
     public Song save(Song song){
         return songRepository.save(song);
     }

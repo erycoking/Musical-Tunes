@@ -1,7 +1,5 @@
 package com.erycoking.MusicStore.repositories;
 
-import com.erycoking.MusicStore.models.Album;
-import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.models.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -47,15 +45,5 @@ public interface SongRepository extends JpaRepository<Song, Integer> {
 
     @Query(value = "select s from Song s join fetch s.artist a where a.artistId = :artistId")
     List<Song> findAllByArtist_ArtistId(int artistId);
-
-    /**
-     * find by Albums
-     * @param name
-     * @return list of songs
-     */
-    @Query(value = "select s from Song s join fetch s.artist where s.album.albumName LIKE %:name%")
-    List<Song> findAllByAlbum_AlbumName(@Param("name") String name);
-    @Query(value = "select s from Song s join fetch s.artist where s.album.albumId = :albumId")
-    List<Song> findAllByAlbum_AlbumId(int albumId);
 
 }

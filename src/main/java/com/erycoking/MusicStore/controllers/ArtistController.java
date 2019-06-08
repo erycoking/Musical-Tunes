@@ -74,20 +74,28 @@ public class ArtistController {
         if (artistService.getArtist(artist.getArtistName()) != null){
             return ResponseEntity.badRequest().body("Song already Exists");
         }else {
-            Artist result = artistService.save(artist);
-            return ResponseEntity.created(new URI("/api/artist/" + result.getArtistId()))
-                    .body(result);
+            try {
+                Artist result = artistService.save(artist);
+                return ResponseEntity.created(new URI("/api/artist/" + result.getArtistId()))
+                        .body(result);
+            }catch (Exception e){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Artist> updateArtist(@PathVariable int id, @Valid @RequestBody Artist artist){
+    ResponseEntity<?> updateArtist(@PathVariable int id, @Valid @RequestBody Artist artist){
         if (artistService.getArtistById(id) == null){
             return ResponseEntity.notFound().build();
         }else {
             log.info("Request to update artist: {}", artist);
-            Artist result = artistService.save(artist);
-            return ResponseEntity.ok().body(result);
+            try {
+                Artist result = artistService.save(artist);
+                return ResponseEntity.ok().body(result);
+            }catch (Exception e){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }
     }
 

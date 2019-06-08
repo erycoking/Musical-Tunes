@@ -1,9 +1,9 @@
 package com.erycoking.MusicStore.Initializer;
 
-import com.erycoking.MusicStore.models.Album;
+import com.erycoking.MusicStore.models.PlayList;
 import com.erycoking.MusicStore.models.Artist;
 import com.erycoking.MusicStore.models.Song;
-import com.erycoking.MusicStore.services.AlbumService;
+import com.erycoking.MusicStore.services.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -15,59 +15,48 @@ import java.util.List;
 public class Seeder implements CommandLineRunner {
 
     @Autowired
-    private AlbumService albumService;
+    private PlayListService playListService;
 
 
     @Override
     public void run(String... args) throws Exception {
 
-//        albumService.deleteAllAlbum();
-        Album album1 = new Album("kings");
-        album1.setSongs(
+//        playListService.deleteAllPlayList();
+        PlayList playList1 = new PlayList("kings",
                 Arrays.asList(
-                        new Song("hi", "rave song" , new Artist("vybz cartel"), album1),
-                        new Song("chaguo la moyo", "love song" , new Artist("otile brown"), album1),
-                        new Song("mazishi" ,"local music",  new Artist("khaligraph"), album1)
-                )
-        );
+                        new Song("hi", "url", "audio/mp3", 2, "rave song" , new Artist("vybz cartel")),
+                        new Song("chaguo la moyo", "url", "audio/mp3", 2, "love song" , new Artist("otile brown")),
+                        new Song("mazishi" , "url", "audio/mp3", 2,"local music",  new Artist("khaligraph"))
+                ));
 
-        Album album2 = new Album("queens");
-        album2.setSongs(
+        PlayList playList2 = new PlayList("queens",
                 Arrays.asList(
-                        new Song("moyo", "rave song" , new Artist("rayvanny"), album2),
-                        new Song("nakupenda", "love song" , new Artist("diamond"), album2),
-                        new Song("nimedata" ,"local music",  new Artist("beyonce"), album2)
-                )
-        );
+                        new Song("moyo", "url", "audio/mp3", 2, "rave song" , new Artist("rayvanny")),
+                        new Song("nakupenda", "url", "audio/mp3", 2, "love song" , new Artist("diamond")),
+                        new Song("nimedata", "url", "audio/mp3", 2,"local music",  new Artist("beyonce"))
+                ));
 
-        Album album3 = new Album("prince");
-        album3.setSongs(
+        PlayList playList3 = new PlayList("prince",
                 Arrays.asList(
-                        new Song("bafuchafu", "rave song" , new Artist("wyre"), album3),
-                        new Song("dem wa nai", "love song" , new Artist("king kaka"), album3),
-                        new Song("noma" ,"local music",  new Artist("meja"), album2)
-                )
-        );
+                        new Song("bafuchafu", "url", "audio/mp3", 2, "rave song" , new Artist("wyre")),
+                        new Song("dem wa nai", "url", "audio/mp3", 2, "love song" , new Artist("king kaka")),
+                        new Song("noma" , "url", "audio/mp3", 2,"local music",  new Artist("meja"))
+                ));
 
-        Album album4 = new Album("voltures");
-        album4.setSongs(
+        PlayList playList4 = new PlayList("voltures",
                 Arrays.asList(
-                        new Song("toa form", "rave song" , new Artist("kenrazy"), album4),
-                        new Song("chokoza", "love song" , new Artist("avril"), album4),
-                        new Song("money" ,"local music",  new Artist("rickross"), album4)
-                )
-        );
+                        new Song("toa form", "url", "audio/mp3", 2, "rave song" , new Artist("kenrazy")),
+                        new Song("chokoza", "url", "audio/mp3", 2, "love song" , new Artist("avril")),
+                        new Song("money" , "url", "audio/mp3", 2,"local music",  new Artist("rickross"))
+                ));
 
-        Album album5 = new Album("wolves");
-        album5.setSongs(
+        PlayList playList5 = new PlayList("wolves",
                 Arrays.asList(
-                        new Song("naskia kuzitoka", "rave song" , new Artist("kristoff"), album5),
-                        new Song("rambadam", "love song" , new Artist("rambadam"), album5),
-                        new Song("bazokizo" ,"local music",  new Artist("bazokizo"), album5)
-                )
-        );
+                        new Song("naskia kuzitoka", "url", "audio/mp3", 2, "rave song" , new Artist("kristoff")),
+                        new Song("rambadam", "url", "audio/mp3", 2, "love song" , new Artist("rambadam")),
+                        new Song("bazokizo" , "url", "audio/mp3", 2,"local music",  new Artist("bazokizo"))
+                ));
 
-        List<Album> albumList = Arrays.asList(album1, album2, album3, album4, album5);
-//        albumService.saveAllAlbums(albumList);
+//        playListService.saveAllPlayList(Arrays.asList(playList1, playList2, playList3, playList4, playList5));
     }
 }
