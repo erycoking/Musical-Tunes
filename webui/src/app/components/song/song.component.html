@@ -1,0 +1,55 @@
+<div class="main">
+  <div class="row justify-content-center">
+    <div class="body col-md-10">
+      <form (ngSubmit)="addSong()" class="form mb-2 mt-2">
+        <div class="form-group row">
+          <label for="name" class="col-sm-3 col-form-label">Song Name</label>
+          <div class="col-sm-9">
+            <input id="name" class="form-control" type="text" name="songName" required [(ngModel)]="newSong.songName">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="type" class="col-sm-3 col-form-label">Song Type</label>
+          <div class="col-sm-9">
+            <input id="type" class="form-control" type="text" name="type" required [(ngModel)]="newSong.type">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="artistName" class="col-sm-3 col-form-label">Artist</label>
+          <div class="col-sm-9">
+            <input id="artistName" class="form-control" type="text" name="artistName" required [(ngModel)]="newArtist.artistName">
+          </div>
+        </div>
+        <div class=" ml-auto">
+            <button class="btn btn-sm btn-primary">Add Song</button>
+        </div>
+      </form>
+      <table class="table table-striped table-bordered">
+        <thead class="bg-info">
+          <tr>
+            <th>Name</th>
+            <th>type</th>
+            <th>Artists</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let song of allSongs">
+            <td>{{ song.songName }}</td>
+            <td>{{ song.type }}</td>
+            <td>{{ song.artist.artistName }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="edit(song.songId)">
+                <span><fa name="edit"></fa></span>
+              </button>
+              &nbsp;|&nbsp;
+              <button class="btn btn-danger btn-sm" (click)="delete(song.songId)">
+                <span><fa name="trash"></fa></span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

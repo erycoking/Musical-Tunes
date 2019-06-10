@@ -1,15 +1,16 @@
 package com.erycoking.MusicStore.Initializer;
 
-import com.erycoking.MusicStore.models.PlayList;
-import com.erycoking.MusicStore.models.Artist;
-import com.erycoking.MusicStore.models.Song;
+import com.erycoking.MusicStore.models.*;
+import com.erycoking.MusicStore.services.ClientService;
 import com.erycoking.MusicStore.services.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class Seeder implements CommandLineRunner {
@@ -17,9 +18,16 @@ public class Seeder implements CommandLineRunner {
     @Autowired
     private PlayListService playListService;
 
+    @Autowired
+    private ClientService clientService;
 
     @Override
     public void run(String... args) throws Exception {
+
+        Optional<Client> client =  clientService.getByUserName("erycoking360@gmail.com");
+        if (!client.isPresent())
+            clientService.save(new Client("Erycoking", "erycoking360@gmail.com", "password", "ROLE_ADMIN"));
+
 
 //        playListService.deleteAllPlayList();
         PlayList playList1 = new PlayList("kings",

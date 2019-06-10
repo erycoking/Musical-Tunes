@@ -1,0 +1,28 @@
+<div class="header mb-3">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+      <a class="navbar-brand" routerLink="/" [routerLinkActive]="'active'">Music Store</a>
+      <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+          aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavId">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item" [routerLinkActive]="'active'">
+            <a class="nav-link" routerLink="/songs">Songs <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="'active'">
+            <a class="nav-link" routerLink="/albums" >Albums</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0" (ngSubmit)="updateFilter()">
+          <input class="form-control-sm mr-sm-2" type="text" name="search" [(ngModel)]="search" placeholder="search">
+          <button class="btn btn-primary btn-sm">
+            <span><fa name="search"></fa></span>
+          </button>
+        </form>
+      </div>
+    </nav>
+</div>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

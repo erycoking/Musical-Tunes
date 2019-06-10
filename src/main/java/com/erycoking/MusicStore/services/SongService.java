@@ -2,11 +2,9 @@ package com.erycoking.MusicStore.services;
 
 import com.erycoking.MusicStore.config.FileStorageProperties;
 import com.erycoking.MusicStore.exception.FileStorageException;
-import com.erycoking.MusicStore.exception.MyFileNotFoundException;
-import com.erycoking.MusicStore.models.Artist;
+import com.erycoking.MusicStore.exception.ResourceNotFoundException;
 import com.erycoking.MusicStore.models.Song;
 import com.erycoking.MusicStore.repositories.SongRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -76,10 +74,10 @@ public class SongService {
             if (resource.exists()){
                 return resource;
             }else {
-                throw new MyFileNotFoundException("File not found " + fileName);
+                throw new ResourceNotFoundException("File not found " + fileName);
             }
         }catch (MalformedURLException ex){
-            throw new MyFileNotFoundException("File not found " + fileName, ex);
+            throw new ResourceNotFoundException("File not found " + fileName, ex);
         }
     }
 
