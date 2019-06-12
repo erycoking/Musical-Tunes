@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.security.jwt;
 
-import com.erycoking.MusicStore.models.Client;
+import com.erycoking.MusicStore.models.Client.Client;
 import com.erycoking.MusicStore.services.ClientService;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;

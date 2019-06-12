@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.controllers;
 
-import com.erycoking.MusicStore.models.Artist;
+import com.erycoking.MusicStore.models.Artist.Artist;
 import com.erycoking.MusicStore.services.ArtistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/artists")
 public class ArtistController {
@@ -71,7 +70,7 @@ public class ArtistController {
     @PostMapping
     ResponseEntity<?> createArtist(@Valid @RequestBody Artist artist) throws URISyntaxException {
         log.info("Request to create artist: {}", artist);
-        if (artistService.getArtist(artist.getArtistName()) != null){
+        if (artistService.exist(artist.getArtistName())){
             return ResponseEntity.badRequest().body("Song already Exists");
         }else {
             try {

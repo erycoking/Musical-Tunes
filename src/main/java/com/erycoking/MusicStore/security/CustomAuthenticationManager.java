@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.security;
 
-import com.erycoking.MusicStore.models.Client;
+import com.erycoking.MusicStore.models.Client.Client;
 import com.erycoking.MusicStore.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

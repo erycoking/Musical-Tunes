@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.services;
 
-import com.erycoking.MusicStore.models.Artist;
+import com.erycoking.MusicStore.models.Artist.Artist;
 import com.erycoking.MusicStore.repositories.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,10 @@ public class ArtistService {
 
     public Optional<Artist> getArtistById(int artistId){
         return artistRepository.findById(artistId);
+    }
+
+    public boolean exist(String name) {
+        return artistRepository.existsByArtistName(name);
     }
 
     public  Artist getArtist(String name){

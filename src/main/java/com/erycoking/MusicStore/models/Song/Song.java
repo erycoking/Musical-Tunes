@@ -1,5 +1,7 @@
-package com.erycoking.MusicStore.models;
+package com.erycoking.MusicStore.models.Song;
 
+import com.erycoking.MusicStore.models.Artist.Artist;
+import com.erycoking.MusicStore.models.Playlist.PlayList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.NotFound;

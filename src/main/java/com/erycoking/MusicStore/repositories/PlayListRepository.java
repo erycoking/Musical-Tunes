@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.repositories;
 
-import com.erycoking.MusicStore.models.PlayList;
+import com.erycoking.MusicStore.models.Playlist.PlayList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +37,6 @@ public interface PlayListRepository extends JpaRepository<PlayList, Integer> {
      */
     @Query("SELECT p FROM PlayList p LEFT JOIN FETCH p.songs s LEFT JOIN FETCH  s.artist WHERE s.songName LIKE %:name%")
     List<PlayList> findBySongsContaining(@Param("name") String name);
+
+    boolean existsByPlayListName(String name);
 }

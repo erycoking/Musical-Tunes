@@ -1,8 +1,8 @@
 package com.erycoking.MusicStore.controllers;
 
-import com.erycoking.MusicStore.models.Artist;
-import com.erycoking.MusicStore.models.PlayList;
-import com.erycoking.MusicStore.models.Song;
+import com.erycoking.MusicStore.models.Artist.Artist;
+import com.erycoking.MusicStore.models.Playlist.PlayList;
+import com.erycoking.MusicStore.models.Song.Song;
 import com.erycoking.MusicStore.services.ArtistService;
 import com.erycoking.MusicStore.services.PlayListService;
 import com.erycoking.MusicStore.services.SongService;
@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/songs")
 public class SongController {

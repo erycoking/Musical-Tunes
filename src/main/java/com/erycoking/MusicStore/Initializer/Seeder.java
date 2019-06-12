@@ -1,15 +1,16 @@
 package com.erycoking.MusicStore.Initializer;
 
-import com.erycoking.MusicStore.models.*;
+import com.erycoking.MusicStore.models.Artist.Artist;
+import com.erycoking.MusicStore.models.Client.Client;
+import com.erycoking.MusicStore.models.Playlist.PlayList;
+import com.erycoking.MusicStore.models.Song.Song;
 import com.erycoking.MusicStore.services.ClientService;
 import com.erycoking.MusicStore.services.PlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Configuration
@@ -26,7 +27,13 @@ public class Seeder implements CommandLineRunner {
 
         Optional<Client> client =  clientService.getByUserName("erycoking360@gmail.com");
         if (!client.isPresent())
-            clientService.save(new Client("Erycoking", "erycoking360@gmail.com", "password", "ROLE_ADMIN"));
+            clientService.save(new Client("Erycoking", "erycoking360@gmail.com",
+                    "password", "ROLE_ADMIN"));
+
+        Optional<Client> client2 =  clientService.getByUserName("erycoking360@gmail.com");
+        if (!client.isPresent())
+            clientService.save(new Client("Nesh", "nesh@gmail.com",
+                    "password", "ROLE_USER"));
 
 
 //        playListService.deleteAllPlayList();

@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.services;
 
-import com.erycoking.MusicStore.models.PlayList;
+import com.erycoking.MusicStore.models.Playlist.PlayList;
 import com.erycoking.MusicStore.repositories.PlayListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,9 @@ public class PlayListService {
         return playListRepository.findById(albumId);
     }
 
+    public boolean exist(String name) {
+        return playListRepository.existsByPlayListName(name);
+    }
 
     public PlayList getPlayList(String name){
         return playListRepository.findByPlayListName(name);

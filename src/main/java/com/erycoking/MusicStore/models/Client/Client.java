@@ -1,6 +1,6 @@
-package com.erycoking.MusicStore.models;
+package com.erycoking.MusicStore.models.Client;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,19 +9,17 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @Entity
 public class Client{
-    public Client(@NotNull(message = "Name is required")
-                  @Pattern(regexp = "[a-zA-Z]+([.']+\\s+[a-zA-Z]+)*", message = "Only letters, apostrophe and period are allowed") String name,
+
+    public Client(@NotNull(message = "Name is required") @Pattern(regexp = "[a-zA-Z]+([.']+\\s+[a-zA-Z]+)*", message = "Only letters, apostrophe and period are allowed") String name,
                   @Email @NotNull(message = "Email is required") String email,
-                  @NotNull(message = "Password is required")
-                  @Size(min = 8, message = "password should be equal or longer than 8 characters") String password1,
-                  @NotNull(message = "role is required")
-                  @Size(min = 8, message = "role should not be less than 3 characters")
-                  String role) {
+                  @NotNull(message = "Password is required") @Size(min = 8, message = "password should be equal or longer than 8 characters") String password1,
+                  @NotNull(message = "role is required") String role) {
         this.name = name;
         this.email = email;
         this.password = password1;
@@ -39,7 +37,7 @@ public class Client{
 
     @Email
     @NotNull(message = "Email is required")
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotNull(message = "Password is required")
@@ -47,10 +45,8 @@ public class Client{
     @Size(min = 8, message = "password should be equal or longer than 8 characters")
     private String password;
 
-    @JsonIgnore
-    @NotNull(message = "role is required")
-    @Size(min = 8, message = "role should not be less than 3 characters")
     @Column(name = "roles", nullable = false)
+    @NotNull(message = "role is required")
     private String role;
 
 }

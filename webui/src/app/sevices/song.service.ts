@@ -2,9 +2,9 @@ import { Album } from './../models/album/album';
 import { Artist } from './../models/artist/artist';
 import { Song } from './../models/song/song';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/Http';
-import { Observable, throwError, BehaviorSubject  } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpHeaders } from '@angular/common/Http';
+import { Observable, BehaviorSubject  } from 'rxjs';
+import {ApiRequestService} from "./api/api-request.service";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,9 @@ export class SongService {
     })
   };
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: ApiRequestService
+  ) { }
 
   updateFilter(filter: string) {
     this.filterBy.next(filter);
@@ -30,108 +32,62 @@ export class SongService {
   }
 
   public getAlbum(albumId: number): Observable<Album>{
-    return this.httpClient.get<Album>(`${this.baseUrl}/albums/` + albumId, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.get(`/albums/` + albumId);
   }
 
   public getArtist(artistId: number): Observable<Artist>{
-    return this.httpClient.get<Artist>(`${this.baseUrl}/artists/` + artistId, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.get(`/artists/` + artistId);
   }
 
   public getSong(sondId: number): Observable<Song>{
-    return this.httpClient.get<Song>(`${this.baseUrl}/songs/` + sondId, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.get(`/songs/` + sondId);
   }
 
   public getAllAlbums(): Observable<Album[]>{
-    return this.httpClient.get<Album[]>(`${this.baseUrl}/albums`).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.get(`/albums`);
   }
 
   public getAllArtists(): Observable<Artist[]>{
-    return this.httpClient.get<Artist[]>(`${this.baseUrl}/artists`).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.get(`/artists`);
   }
 
   public getAllSongs(): Observable<Song[]>{
-    return this.httpClient.get<Song[]>(`${this.baseUrl}/songs`).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.get(`/songs`);
   }
 
   public addAlbum(album : Album): Observable<Album>{
     if (album.albumId){
-      return this.httpClient.put<Album>(`${this.baseUrl}/albums/` + album.albumId, album, this.httpOptions).pipe(
-        catchError(this.handleError)
-      );
+      return this.httpClient.put(`/albums/` + album.albumId, album);
     } else {
-      return this.httpClient.post<Album>(`${this.baseUrl}/albums`, album, this.httpOptions).pipe(
-        catchError(this.handleError)
-      );
+      return this.httpClient.post(`/albums`, album);
     }
   }
 
   public addArtists(artist : Artist): Observable<Artist>{
     if (artist.artistId){
-      return this.httpClient.put<Artist>(`${this.baseUrl}/artists/` + artist.artistId, artist, this.httpOptions).pipe(
-        catchError(this.handleError)
-      );
+      return this.httpClient.put(`/artists/` + artist.artistId, artist);
     } else {
-      return this.httpClient.post<Artist>(`${this.baseUrl}/artists`, artist, this.httpOptions).pipe(
-        catchError(this.handleError)
-      );
+      return this.httpClient.post(`/artists`, artist);
     }
   }
 
   public addSong(song : Song): Observable<Song>{
     if (song.songId){
-      return this.httpClient.put<Song>(`${this.baseUrl}/songs/` + song.songId, song, this.httpOptions).pipe(
-        catchError(this.handleError)
-      );
+      return this.httpClient.put(`/songs/` + song.songId, song);
     } else {
-      return this.httpClient.post<Song>(`${this.baseUrl}/songs`, song, this.httpOptions).pipe(
-        catchError(this.handleError)
-      );
+      return this.httpClient.post(`/songs`, song);
     }
   }
 
   public deleteAlbum(albumId: number): Observable<any>{
-    return this.httpClient.delete(`${this.baseUrl}/albums/${albumId}`, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.delete(`/albums/${albumId}`);
   }
 
   public deleteArtists(artistId: number): Observable<any>{
-    return this.httpClient.delete(`${this.baseUrl}/artists/${artistId}`, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient.delete(`/artists/${artistId}`);
   }
 
   public deleteSong(sondId: number): Observable<any>{
-    return this.httpClient.delete(`${this.baseUrl}/songs/${sondId}`, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-
-  private handleError(error: HttpErrorResponse){
-    if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong,
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`);
-    }
-    // return an observable with a user-facing error message
-    return throwError('Something bad happened; please try again later.');
+    return this.httpClient.delete(`/songs/${sondId}`);
   }
 }

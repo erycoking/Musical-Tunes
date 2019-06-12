@@ -1,3 +1,8 @@
+import { AppConfig } from './app-config';
+import { UserInfoService } from './sevices/user-info.service';
+import { ApiRequestService } from './sevices/api/api-request.service';
+import { AuthService } from './sevices/auth.service';
+import { AuthGuard } from './sevices/auth-guard.service';
 import { SongService } from './sevices/song.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -11,6 +16,7 @@ import { AlbumComponent } from './components/album/album.component';
 import { RouterModule, Routes } from '@angular/router';
 import appRouter from './routes';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { LoginComponent } from './components/login/login.component';
 
 
 @NgModule({
@@ -18,7 +24,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     AppComponent,
     SongComponent,
     AlbumComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +37,18 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
       { enableTracing: true}
     )
   ],
-  providers: [SongService],
+  providers: [
+    SongService,
+    AuthGuard,
+    AppConfig,
+    AuthService,
+    ApiRequestService,
+    UserInfoService],
   bootstrap: [AppComponent]
 })
-export class AppModule { SongComponent; AlbumComponent; PageNotFoundComponent;}
+export class AppModule {
+  SongComponent;
+  AlbumComponent;
+  PageNotFoundComponent;
+  LoginComponent;
+}

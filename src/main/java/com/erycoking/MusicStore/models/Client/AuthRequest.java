@@ -1,4 +1,4 @@
-package com.erycoking.MusicStore.models;
+package com.erycoking.MusicStore.models.Client;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

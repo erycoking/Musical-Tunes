@@ -1,0 +1,26 @@
+<div class="login">
+  <div class="row justify-content-center">
+    <div class="body col-md-10">
+      <form (ngSubmit)="signIn()" class="form mb-2 mt-2">
+        <div class="form-group row">
+          <label for="name" class="col-sm-3 col-form-label">Username: &nbsp;</label>
+          <div class="col-sm-9">
+            <input id="name" class="form-control" type="text" name="username" required [(ngModel)]="model.username">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="type" class="col-sm-3 col-form-label">Password: &nbsp;</label>
+          <div class="col-sm-9">
+            <input id="type" class="form-control" type="text" name="password" required [(ngModel)]="model.password">
+          </div>
+        </div>
+        <div class=" ml-auto">
+          <button class="btn btn-sm btn-primary" type="submit">Sign In</button>
+        </div>
+        <div class="s-login-pg-foot">
+          <div *ngIf="errMsg" style="color:indianred; font-weight: bold">{{ errMsg }}</div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

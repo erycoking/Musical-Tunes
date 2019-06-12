@@ -3,7 +3,7 @@ package com.erycoking.MusicStore.services;
 import com.erycoking.MusicStore.config.FileStorageProperties;
 import com.erycoking.MusicStore.exception.FileStorageException;
 import com.erycoking.MusicStore.exception.ResourceNotFoundException;
-import com.erycoking.MusicStore.models.Song;
+import com.erycoking.MusicStore.models.Song.Song;
 import com.erycoking.MusicStore.repositories.SongRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -36,6 +36,10 @@ public class SongService {
         }catch (Exception ex){
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
+    }
+
+    public boolean exist(String name) {
+        return songRepository.existsBySongName(name);
     }
 
     public Optional<Song> getSongById(int artistId){

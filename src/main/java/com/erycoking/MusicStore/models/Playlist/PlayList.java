@@ -1,5 +1,6 @@
-package com.erycoking.MusicStore.models;
+package com.erycoking.MusicStore.models.Playlist;
 
+import com.erycoking.MusicStore.models.Song.Song;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;

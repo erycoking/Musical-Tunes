@@ -1,6 +1,6 @@
 package com.erycoking.MusicStore.services;
 
-import com.erycoking.MusicStore.models.Client;
+import com.erycoking.MusicStore.models.Client.Client;
 import com.erycoking.MusicStore.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientService implements UserDetailsService {
@@ -30,6 +31,10 @@ public class ClientService implements UserDetailsService {
 
     public Optional<Client> getClient(int id){
         return clientRepository.findById(id);
+    }
+
+    public boolean exist(String name) {
+        return clientRepository.existsByName(name);
     }
 
     public Optional<Client> getByUserName(String email){
