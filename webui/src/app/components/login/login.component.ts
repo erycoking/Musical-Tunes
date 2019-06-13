@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {AuthService, userCredentials} from "../../sevices/auth.service";
-import {Router} from "@angular/router";
+import {AuthService, userCredentials} from '../../sevices/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -20,11 +20,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  signIn(){
+  signIn() {
     this.authService.login(this.model.username, this.model.password).subscribe(
       data => {
-        console.log(data);
-        if (data.success){
+        if (data.success) {
           this.router.navigate([data.landingPage]);
         }
         this.errMsg = 'Username or password is incorrect';
@@ -37,12 +36,16 @@ export class LoginComponent implements OnInit {
             break;
           case 404:
             this.errMsg = 'Service not found';
+            break;
           case 408:
             this.errMsg = 'Request Timedout';
+            break;
           case 500:
             this.errMsg = 'Internal Server Error';
+            break;
           default:
             this.errMsg = 'Server Error';
+            break;
         }
       }
     );

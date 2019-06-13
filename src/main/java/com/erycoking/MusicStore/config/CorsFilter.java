@@ -1,10 +1,13 @@
 package com.erycoking.MusicStore.config;
 
+import org.springframework.context.annotation.Configuration;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Configuration
 public class CorsFilter implements javax.servlet.Filter {
 
     @Override

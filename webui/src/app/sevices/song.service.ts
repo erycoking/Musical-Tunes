@@ -4,7 +4,7 @@ import { Song } from './../models/song/song';
 import { Injectable } from '@angular/core';
 import { HttpHeaders } from '@angular/common/Http';
 import { Observable, BehaviorSubject  } from 'rxjs';
-import {ApiRequestService} from "./api/api-request.service";
+import {ApiRequestService} from './api/api-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +18,12 @@ export class SongService {
   httpOptions = {
     headers : new HttpHeaders({
       'Content-type' : 'application/json',
-      'Accepts' : 'application/json'
+      Accepts : 'application/json'
     })
   };
 
   constructor(
-    private httpClient: ApiRequestService
+    private requestService: ApiRequestService
   ) { }
 
   updateFilter(filter: string) {
@@ -31,63 +31,63 @@ export class SongService {
     this.currentFilterBy.subscribe(key => console.log(key));
   }
 
-  public getAlbum(albumId: number): Observable<Album>{
-    return this.httpClient.get(`/albums/` + albumId);
+  public getAlbum(albumId: number): Observable<Album> {
+    return this.requestService.get(`/albums/` + albumId);
   }
 
-  public getArtist(artistId: number): Observable<Artist>{
-    return this.httpClient.get(`/artists/` + artistId);
+  public getArtist(artistId: number): Observable<Artist> {
+    return this.requestService.get(`/artists/` + artistId);
   }
 
-  public getSong(sondId: number): Observable<Song>{
-    return this.httpClient.get(`/songs/` + sondId);
+  public getSong(sondId: number): Observable<Song> {
+    return this.requestService.get(`/songs/` + sondId);
   }
 
-  public getAllAlbums(): Observable<Album[]>{
-    return this.httpClient.get(`/albums`);
+  public getAllAlbums(): Observable<Album[]> {
+    return this.requestService.get(`/albums`);
   }
 
-  public getAllArtists(): Observable<Artist[]>{
-    return this.httpClient.get(`/artists`);
+  public getAllArtists(): Observable<Artist[]> {
+    return this.requestService.get(`/artists`);
   }
 
-  public getAllSongs(): Observable<Song[]>{
-    return this.httpClient.get(`/songs`);
+  public getAllSongs(): Observable<Song[]> {
+    return this.requestService.get(`/songs`);
   }
 
-  public addAlbum(album : Album): Observable<Album>{
-    if (album.albumId){
-      return this.httpClient.put(`/albums/` + album.albumId, album);
+  public addAlbum(album: Album): Observable<Album> {
+    if (album.albumId) {
+      return this.requestService.put(`/albums/` + album.albumId, album);
     } else {
-      return this.httpClient.post(`/albums`, album);
+      return this.requestService.post(`/albums`, album);
     }
   }
 
-  public addArtists(artist : Artist): Observable<Artist>{
-    if (artist.artistId){
-      return this.httpClient.put(`/artists/` + artist.artistId, artist);
+  public addArtists(artist: Artist): Observable<Artist> {
+    if (artist.artistId) {
+      return this.requestService.put(`/artists/` + artist.artistId, artist);
     } else {
-      return this.httpClient.post(`/artists`, artist);
+      return this.requestService.post(`/artists`, artist);
     }
   }
 
-  public addSong(song : Song): Observable<Song>{
-    if (song.songId){
-      return this.httpClient.put(`/songs/` + song.songId, song);
+  public addSong(song: Song): Observable<Song> {
+    if (song.songId) {
+      return this.requestService.put(`/songs/` + song.songId, song);
     } else {
-      return this.httpClient.post(`/songs`, song);
+      return this.requestService.post(`/songs`, song);
     }
   }
 
-  public deleteAlbum(albumId: number): Observable<any>{
-    return this.httpClient.delete(`/albums/${albumId}`);
+  public deleteAlbum(albumId: number): Observable<any> {
+    return this.requestService.delete(`/albums/${albumId}`);
   }
 
-  public deleteArtists(artistId: number): Observable<any>{
-    return this.httpClient.delete(`/artists/${artistId}`);
+  public deleteArtists(artistId: number): Observable<any> {
+    return this.requestService.delete(`/artists/${artistId}`);
   }
 
-  public deleteSong(sondId: number): Observable<any>{
-    return this.httpClient.delete(`/songs/${sondId}`);
+  public deleteSong(sondId: number): Observable<any> {
+    return this.requestService.delete(`/songs/${sondId}`);
   }
 }

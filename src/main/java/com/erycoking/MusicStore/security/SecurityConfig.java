@@ -1,5 +1,6 @@
 package com.erycoking.MusicStore.security;
 
+import com.erycoking.MusicStore.config.CorsFilter;
 import com.erycoking.MusicStore.security.jwt.JwtConfigurer;
 import com.erycoking.MusicStore.security.jwt.JwtTokenProvider;
 import com.erycoking.MusicStore.services.ClientService;
@@ -13,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,12 +26,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private BCryptPasswordEncoder passwordEncoder;
     private ClientService clientService;
     private JwtTokenProvider jwtTokenProvider;
+    private CorsFilter corsFilter;
 
     @Autowired
-    public SecurityConfig(BCryptPasswordEncoder passwordEncoder, ClientService clientService, JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(BCryptPasswordEncoder passwordEncoder, ClientService clientService, JwtTokenProvider jwtTokenProvider, CorsFilter corsFilter) {
         this.passwordEncoder = passwordEncoder;
         this.clientService = clientService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.corsFilter = corsFilter;
     }
 
     @Override
@@ -42,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .addFilterBefore(corsFilter, ChannelProcessingFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
