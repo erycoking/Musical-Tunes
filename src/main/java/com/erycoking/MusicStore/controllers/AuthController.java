@@ -3,8 +3,12 @@ package com.erycoking.MusicStore.controllers;
 import com.erycoking.MusicStore.exception.UserNotFoundException;
 import com.erycoking.MusicStore.models.Client.AuthRequest;
 import com.erycoking.MusicStore.models.Client.Client;
+import com.erycoking.MusicStore.models.TokenResponse;
 import com.erycoking.MusicStore.security.jwt.JwtTokenProvider;
 import com.erycoking.MusicStore.services.ClientService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
+@Api(description = "Set of Endpoints for authentication")
 public class AuthController {
 
     @Autowired
@@ -32,21 +37,20 @@ public class AuthController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping(value = "/signin")
-    public ResponseEntity<?> login(@RequestBody AuthRequest data){
+    @PostMapping(value = "/signin")
+    @ApiOperation("Returns a token with user information")
+    public ResponseEntity<TokenResponse> login(
+            @ApiParam(value = "object containing username and password of the user", required = true)
+            @RequestBody AuthRequest data){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword()));
             String token = jwtTokenProvider.createToken(clientService.getByUserName(data.getUsername()).orElseThrow(() -> new UserNotFoundException("Username " + data.getUsername() + "not found")));
 
-
-            Map<Object, Object> model = new HashMap<>();
-            model.put("username", data.getUsername());
-            model.put("token", token);
             Optional<Client> client =  clientService.getByUserName(data.getUsername());
             if (client.isPresent())
-                model.put("displayName", client.get().getName());
-
-            return ResponseEntity.ok(model);
+                return ResponseEntity.ok(new TokenResponse(token, client.get()));
+            else
+                throw new BadCredentialsException("An error occurred");
 
         }catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid username/password supplied");
@@ -54,24 +58,22 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@Valid @RequestBody Client client){
+    @ApiOperation("Adds a user and return a token")
+    public ResponseEntity<TokenResponse> register(
+            @ApiParam(value = "object of the user to be added", required = true)
+            @Valid @RequestBody Client client){
         try {
 
             if (clientService.exist(client.getName()))
-                return ResponseEntity.badRequest().body("user already exists");
+                throw new BadCredentialsException("An error occurred");
 
             client.setRole("ROLE_USER");
-            clientService.save(client);
+            Client newClient =  clientService.save(client);
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(client.getEmail(), client.getPassword()));
             String token = jwtTokenProvider.createToken(clientService.getByUserName(client.getEmail()).orElseThrow(() -> new UserNotFoundException("Username " + client.getEmail() + "not found")));
 
-            Map<Object, Object> model = new HashMap<>();
-            model.put("username", client.getEmail());
-            model.put("token", token);
-            model.put("displayName",client.getName());
-
-            return ResponseEntity.ok(model);
+            return ResponseEntity.ok(new TokenResponse(token, newClient));
 
         }catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid username/password supplied");

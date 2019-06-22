@@ -1,5 +1,6 @@
 package com.erycoking.MusicStore.models.Client;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,25 +29,30 @@ public class Client{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty
     private int clientId;
 
     @NotNull(message = "Name is required")
     @Pattern(regexp = "[a-zA-Z]+([.']+\\s+[a-zA-Z]+)*", message = "Only letters, apostrophe and period are allowed")
     @Column(name = "name", nullable = false)
+    @ApiModelProperty(example ="eryco king", required = true, position = 0)
     private String name;
 
     @Email
     @NotNull(message = "Email is required")
     @Column(name = "email", nullable = false, unique = true)
+    @ApiModelProperty(example = "erycoking360@gmail.com", required = true, position = 2)
     private String email;
 
     @NotNull(message = "Password is required")
     @Column(name = "password", nullable = false)
     @Size(min = 8, message = "password should be equal or longer than 8 characters")
+    @ApiModelProperty(example = "password", required = true, position = 2)
     private String password;
 
     @Column(name = "roles", nullable = false)
     @NotNull(message = "role is required")
+    @ApiModelProperty
     private String role;
 
 }

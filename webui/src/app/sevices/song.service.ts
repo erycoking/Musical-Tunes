@@ -1,3 +1,4 @@
+import { SongInfo } from './song.service';
 import { Album } from './../models/album/album';
 import { Artist } from './../models/artist/artist';
 import { Song } from './../models/song/song';
@@ -5,6 +6,14 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders } from '@angular/common/Http';
 import { Observable, BehaviorSubject  } from 'rxjs';
 import {ApiRequestService} from './api/api-request.service';
+
+
+export interface SongInfo {
+  songId?: number;
+  song: any;
+  type: string;
+  artist: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -71,7 +80,15 @@ export class SongService {
     }
   }
 
-  public addSong(song: Song): Observable<Song> {
+  public addSong(song: any): Observable<Song> {
+    console.log(song);
+    const newSong: SongInfo = {
+      songId: song.songId,
+      song: song.song,
+      type: song.type,
+      artist: song.artist
+    };
+    console.log(newSong);
     if (song.songId) {
       return this.requestService.put(`/songs/` + song.songId, song);
     } else {

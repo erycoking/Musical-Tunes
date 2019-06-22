@@ -1,11 +1,16 @@
 package com.erycoking.MusicStore.controllers;
 
+import com.erycoking.MusicStore.exception.BadRequestException;
+import com.erycoking.MusicStore.exception.ResourceNotFoundException;
 import com.erycoking.MusicStore.models.Artist.Artist;
 import com.erycoking.MusicStore.models.Playlist.PlayList;
 import com.erycoking.MusicStore.models.Song.Song;
 import com.erycoking.MusicStore.services.ArtistService;
 import com.erycoking.MusicStore.services.PlayListService;
 import com.erycoking.MusicStore.services.SongService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +35,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/songs")
+@Api(description = "Set of endpoints for creating, editing, updating and deleting songs")
 public class SongController {
 
     private final Logger log = LoggerFactory.getLogger(SongController.class);
@@ -47,84 +53,111 @@ public class SongController {
     }
 
     @GetMapping
+    @ApiOperation("Return a list of all songs in the system")
     Collection<Song> songs(){
         return songService.getAllSong();
     }
 
     @GetMapping("/{id:[\\d]+}")
-    ResponseEntity<?> getSong(@PathVariable int id) {
+    @ApiOperation("Return a song using the specified id")
+    ResponseEntity<Song> getSong(
+            @ApiParam(value = "Id of the song to be obtained", example ="10", required = true)
+            @PathVariable int id) {
         Optional<Song> song = songService.getSongById(id);
         return song.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Song not found"));
     }
 
     @GetMapping("/{name:[a-z]+}")
-    ResponseEntity<?> getSong(@PathVariable String name) {
+    @ApiOperation("Return a song using the specified name")
+    ResponseEntity<Song> getSong(
+            @ApiParam(value = "Name of the song to be obtained", example ="Love is real", required = true)
+            @PathVariable String name) {
         Song song = songService.getSong(name);
         if(song == null){
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Song not found");
         }
         return ResponseEntity.ok().body(song);
     }
 
     @GetMapping("/{name}/songs")
-    ResponseEntity<?> getSongBySongName(@PathVariable String name) {
+    @ApiOperation("Return a list of all songs containing the specified characters in the system")
+    ResponseEntity<List<Song>> getSongBySongName(
+            @ApiParam(value = "character to be used for filtering", example ="lov", required = true)
+            @PathVariable String name) {
         List<Song> song = songService.getAllSongByName(name);
         if(song == null){
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Song not found");
         }
         return ResponseEntity.ok().body(song);
     }
 
     @GetMapping("/{id:[\\d]+}/artist")
-    ResponseEntity<?> getSongByArtistId(@PathVariable int id) {
+    @ApiOperation("Return a list of all songs belonging to the artist with the specified id in the system")
+    ResponseEntity<List<Song>> getSongByArtistId(
+            @ApiParam(value = "Id of the artist whose songs are to be obtained", example ="10", required = true)
+            @PathVariable int id) {
         List<Song> song = songService.getAllByArtistId(id);
         if(song == null){
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Song not found");
         }
         return ResponseEntity.ok().body(song);
     }
 
     @GetMapping("/{name:[a-z]+}/artist")
-    ResponseEntity<?> getSongByArtist(@PathVariable String name) {
+    @ApiOperation("Return a list of all songs belonging to the artist with the specified characters in the artist name in the system")
+    ResponseEntity<List<Song>> getSongByArtist(
+            @ApiParam(value = "Name of the artist whose songs are to be obtained", example ="vybz", required = true)
+            @PathVariable String name) {
         List<Song> song = songService.getAllByArtistName(name);
         if(song == null){
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Song not found");
         }
         return ResponseEntity.ok().body(song);
     }
 
     @GetMapping("/{id:[\\d]+}/playlist")
-    ResponseEntity<?> getSongByPlayListId(@PathVariable int id) {
+    @ApiOperation("Return a list of all songs belonging to the playlist with the specified id in the system")
+    ResponseEntity<List<Song>> getSongByPlayListId(
+            @ApiParam(value = "Id of the playlist whose songs are to be obtained", example ="10", required = true)
+            @PathVariable int id) {
         Optional<PlayList> optionalPlayList = playListService.getPlayListId(id);
         if (optionalPlayList.isPresent()){
             List<Song> song = optionalPlayList.get().getSongs();
             if(song == null || song.isEmpty()) {
-                return ResponseEntity.ok().body("No songs available");
+                throw new ResourceNotFoundException("Song not found");
             }
             return ResponseEntity.ok().body(song);
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Song not found");
 
     }
 
     @GetMapping("/{name:[a-z]+}/playlist")
-    ResponseEntity<?> getSongByAlbum(@PathVariable String name) {
+    @ApiOperation("Return a list of all songs belonging to the playlist with the specified characters in the system")
+    ResponseEntity<List<Song>> getSongByAlbum(
+            @ApiParam(value = "name of the playlist whose songs are to be obtained", example ="kings", required = true)
+            @PathVariable String name) {
         PlayList playList = playListService.getPlayList(name);
         if (playList != null){
             List<Song> allSongs = playList.getSongs();
             if(allSongs == null || allSongs.isEmpty()){
-                return ResponseEntity.ok().body("No allSongs available");
+                throw new ResourceNotFoundException("Song not found");
             }
             return ResponseEntity.ok().body(allSongs);
         }
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Song not found");
     }
 
     @PostMapping(headers=("content-type=multipart/*"))
-    ResponseEntity<?> createSong(@RequestParam("song") MultipartFile inputFile,
-                                 @RequestParam("type") String type,
-                                 @RequestParam("artist") String artist) throws URISyntaxException {
+    @ApiOperation("Adds a new song to the system")
+    ResponseEntity<Song> createSong(
+            @ApiParam(value = "Audio file of the song to be added", example ="Alivyo nipendaga.mp3", required = true)
+            @RequestParam("song") MultipartFile inputFile,
+            @ApiParam(value = "Type of the song to be added", example ="RNB", required = true)
+            @RequestParam("type") String type,
+            @ApiParam(value = "Artist Name", example ="diamond", required = true)
+            @RequestParam("artist") String artist) throws URISyntaxException {
         HttpHeaders headers = new HttpHeaders();
 
         if (!inputFile.isEmpty()) {
@@ -158,41 +191,55 @@ public class SongController {
                             .headers(headers)
                             .body(result);
                 }else {
-                    return ResponseEntity.badRequest().body("Song already Exists");
+                    throw new BadRequestException("Song already Exists");
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new BadRequestException(e.getMessage());
             }
         }else {
-            return ResponseEntity.badRequest().body("Song is required");
+            throw new BadRequestException("Song is required");
         }
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateSong(@PathVariable int id, @Valid @RequestBody Song song){
-        if (songService.getSongById(id) == null){
-            return ResponseEntity.notFound().build();
+    @ApiOperation("Updates a song name in the system")
+    ResponseEntity<Song> updateSong(
+            @ApiParam(value = "Id of the song to be updated", example = "12", required = true)
+            @PathVariable int id,
+            @ApiParam(value = "Id of the song to be deleted", example = "12", required = true)
+            @Valid @RequestBody String name){
+
+        Optional<Song> song = songService.getSongById(id);
+        if ( !song.isPresent()){
+            throw new ResourceNotFoundException("Song not found");
         }else{
             log.info("Request to update song: {}", song);
             try {
-                Song result = songService.save(song);
+                song.get().setSongName(name);
+                Song result = songService.save(song.get());
                 return ResponseEntity.ok().body(result);
             }catch (Exception e){
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new BadRequestException(e.getMessage());
             }
         }
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteSong(@PathVariable int id){
+    @ApiOperation("Deletes a song in the system")
+    ResponseEntity<String> deleteSong(
+            @ApiParam(value = "Id of the song to be deleted", example = "12", required = true)
+            @PathVariable int id){
         log.info("Request to delete song: {}", id);
         songService.deleteSong(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Song successfully deleted");
     }
 
     @GetMapping("/downloads/{fileName:.+}")
-    ResponseEntity<Resource> downloadFile(@PathVariable("fileName") String fileName, HttpServletRequest request){
+    @ApiOperation("Return a the specified file from the system")
+    ResponseEntity<Resource> downloadFile(
+            @ApiParam(value = "Path of the file",example = "F://uploads/Boasty.mp3", required = true)
+            @PathVariable("fileName") String fileName, HttpServletRequest request){
 //        Load file as Resource
         Resource resource = songService.loadFileAsResource(fileName);
 

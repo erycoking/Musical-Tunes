@@ -1,23 +1,23 @@
 <div class="main">
   <div class="row justify-content-center">
     <div class="body col-md-10">
-      <form (ngSubmit)="addSong()" class="form mb-2 mt-2">
+      <form (ngSubmit)="addSong()" class="form mb-2 mt-2" enctype="multipart/form-data">
         <div class="form-group row">
-          <label for="name" class="col-sm-3 col-form-label">Song Name</label>
+          <label for="song" class="col-sm-3 col-form-label">Upload Song</label>
           <div class="col-sm-9">
-            <input id="name" class="form-control" type="text" name="songName" required [(ngModel)]="newSong.songName">
+            <input id="song" type="file" accept="audio/*" name="song" required [(ngModel)]="song.song">
           </div>
         </div>
         <div class="form-group row">
           <label for="type" class="col-sm-3 col-form-label">Song Type</label>
           <div class="col-sm-9">
-            <input id="type" class="form-control" type="text" name="type" required [(ngModel)]="newSong.type">
+            <input id="type" class="form-control" type="text" name="type" required [(ngModel)]="song.type">
           </div>
         </div>
         <div class="form-group row">
           <label for="artistName" class="col-sm-3 col-form-label">Artist</label>
           <div class="col-sm-9">
-            <input id="artistName" class="form-control" type="text" name="artistName" required [(ngModel)]="newArtist.artistName">
+            <input id="artistName" class="form-control" type="text" name="artistName" required [(ngModel)]="song.artist">
           </div>
         </div>
         <div class=" ml-auto">

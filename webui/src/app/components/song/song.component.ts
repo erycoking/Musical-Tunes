@@ -12,6 +12,7 @@ import { Component, OnInit } from '@angular/core';
 export class SongComponent implements OnInit {
 
   allSongs: Song[];
+  song: { any };
   newSong = new Song();
   newArtist = new Artist();
   albums: Album[];
@@ -41,9 +42,8 @@ export class SongComponent implements OnInit {
     );
   }
 
-  addSong(){
-    this.newSong.artist = this.newArtist;
-    this.songService.addSong(this.newSong).subscribe(
+  addSong() {
+    this.songService.addSong(this.song).subscribe(
       res => {
         this.successMgs = 'Song successfully added';
         this.reset();
@@ -52,7 +52,7 @@ export class SongComponent implements OnInit {
     );
   }
 
-  getSingleSong(id: number){
+  getSingleSong(id: number) {
     this.songService.getSong(id).subscribe(
       res => {
         this.newSong = res;
@@ -63,7 +63,7 @@ export class SongComponent implements OnInit {
     );
   }
 
-  deleteSong(id: number){
+  deleteSong(id: number) {
     this.songService.deleteSong(id).subscribe(
       res => {
         this.deleted = true;
@@ -74,15 +74,15 @@ export class SongComponent implements OnInit {
     );
   }
 
-  edit(id: number){
+  edit(id: number) {
     this.getSingleSong(id);
   }
 
-  delete(id: number){
+  delete(id: number) {
     this.deleteSong(id);
   }
 
-  reset(){
+  reset() {
     this.newAlbum = new Album();
     this.newArtist = new Artist();
     this.newSong = new Song();
@@ -90,7 +90,7 @@ export class SongComponent implements OnInit {
     this.getAllSongs();
   }
 
-  displayError(err){
+  displayError(err) {
     this.errOccurred = true;
     this.errMsg = err;
   }

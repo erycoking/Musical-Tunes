@@ -36,25 +36,31 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public ResponseEntity handleBaseException(DataIntegrityViolationException e){
         log.debug("handling DataIntegrityViolationException...");
-        return ResponseEntity.badRequest().body("DataIntegrityViolationException");
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(value = FileStorageException.class)
     public ResponseEntity handleFileStorageException(FileStorageException e){
         log.debug("handling FileStorageException...");
-        return ResponseEntity.badRequest().body("FileStorageException");
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity handleUserNotFoundException(UserNotFoundException e){
         log.debug("handling UserNotFoundException...");
-        return ResponseEntity.badRequest().body("UserNotFoundException");
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(value = JwtException.class)
     public ResponseEntity handleJwtException(JwtException e){
         log.debug("handling JwtException...");
-        return ResponseEntity.badRequest().body("JwtException");
+        return ResponseEntity.badRequest().body(e);
+    }
+
+    @ExceptionHandler(value = BadRequestException.class)
+    public ResponseEntity handleBadRequestException(BadRequestException e){
+        log.debug("handling BadRequestException...");
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(Exception.class)

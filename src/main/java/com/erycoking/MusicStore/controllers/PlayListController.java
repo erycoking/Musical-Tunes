@@ -1,9 +1,14 @@
 package com.erycoking.MusicStore.controllers;
 
+import com.erycoking.MusicStore.exception.BadRequestException;
+import com.erycoking.MusicStore.exception.ResourceNotFoundException;
 import com.erycoking.MusicStore.models.Playlist.PlayList;
 import com.erycoking.MusicStore.models.Song.Song;
 import com.erycoking.MusicStore.services.PlayListService;
 import com.erycoking.MusicStore.services.SongService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/playlists")
+@Api(description = "Set of endpoints for creating, reading, updating and deleting playlists")
 public class PlayListController {
 
     private final Logger log = LoggerFactory.getLogger(PlayListController.class);
@@ -34,54 +40,71 @@ public class PlayListController {
     }
 
     @GetMapping
+    @ApiOperation("Return a lists of all playlists in the system")
     Collection<PlayList> playlists(){
         return playListService.getAllPlayList();
     }
 
     @GetMapping("/{id:[\\d]+}")
-    ResponseEntity<?> getPlayList(@PathVariable int id) {
+    @ApiOperation("Returns a playlist with the specified id")
+    ResponseEntity<PlayList> getPlayList(
+            @ApiParam(value = "Id of the playlist to be obtained", example = "2", required = true)
+            @PathVariable int id) {
         Optional<PlayList> playList = playListService.getPlayListId(id);
         return playList.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseThrow(() ->  new ResourceNotFoundException("PlayList not found"));
     }
 
     @GetMapping("/{name:[a-z]+}")
-    ResponseEntity<?> getPlayListByName(@PathVariable String name) {
+    @ApiOperation("Returns a playlist with the specified name")
+    ResponseEntity<PlayList> getPlayListByName(
+            @ApiParam(value = "Name of the playlist to be obtained", example = "locals", required = true)
+            @PathVariable String name) {
         PlayList playList = playListService.getPlayList(name);
         if (playList == null){
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("PlayList not found");
         }
         return ResponseEntity.ok().body(playList);
     }
 
     @GetMapping("/{name}/playList")
-    ResponseEntity<?> getAllPlayListByName(@PathVariable String name) {
+    @ApiOperation("Returns a list of playlist with the specified characters")
+    ResponseEntity<List<PlayList>> getAllPlayListByName(
+            @ApiParam(value = "Characters used to filter the playlist to be obtained", example = "locals", required = true)
+            @PathVariable String name) {
         List<PlayList> playList = playListService.getAllPlayListByName(name);
         if (playList == null || playList.isEmpty()){
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("PlayList not found");
         }
         return ResponseEntity.ok().body(playList);
     }
 
     @PostMapping
-    ResponseEntity<?> createPlayList(@RequestParam("name") String playlist) throws URISyntaxException {
+    @ApiOperation("Adds a playlist to the system and returns the new playlist")
+    ResponseEntity<PlayList> createPlayList(
+            @ApiParam(value = "Name of the playlist to be added", example = "locals", required = true)
+            @RequestParam("name") String playlist) throws URISyntaxException {
         log.info("Request to create playList: {}", playlist);
         if (playListService.getPlayList(playlist) != null){
-            return ResponseEntity.badRequest().body("Song already Exists");
+            throw new BadRequestException("An error occurred while adding the playList, kindly check that the inputs are correct");
         }else {
             try {
                 PlayList result = playListService.save(new PlayList(playlist));
                 return ResponseEntity.created(new URI("/api/playList/" + result.getPlayListId()))
                         .body(result);
             }catch (Exception e){
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new BadRequestException(e.getMessage());
             }
         }
     }
 
     @PostMapping("/{playListName:[a-z]+}/songs")
-    ResponseEntity<?> addsongsToPlayList(@PathVariable("playListName") String playListName,
-                                      @RequestParam("songs") String[] songs) throws URISyntaxException {
+    @ApiOperation("Adds songs to a playlist in the system and returns the playlist")
+    ResponseEntity<PlayList> addsongsToPlayList(
+            @ApiParam(value = "Name of the playlists to add songs", example = "locals", required = true)
+            @PathVariable("playListName") String playListName,
+            @ApiParam(value = "List of the songs to be added", example = "locals", required = true)
+            @RequestParam("songs") String[] songs) throws URISyntaxException {
         log.info("Request to add songs to playList: {}", songs);
 
         PlayList playList;
@@ -95,9 +118,9 @@ public class PlayListController {
                         songsToBeAdded.add(optionalSong.get());
                     }
                 }catch (NumberFormatException ex){
-                    return ResponseEntity.badRequest().body("Array of integers expected");
+                    throw new BadRequestException(ex.getMessage());
                 }catch (Exception ex){
-                    return ResponseEntity.badRequest().body("Something went wrong, try again later");
+                    throw new BadRequestException(ex.getMessage());
                 }
 
             }
@@ -110,33 +133,47 @@ public class PlayListController {
                 return ResponseEntity.created(new URI("/api/playList/" + result.getPlayListId()))
                         .body(result);
             }catch (Exception e){
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new BadRequestException(e.getMessage());
             }
 
         }else {
-            return ResponseEntity.badRequest().body("PlayList does not exists");
+            throw new ResourceNotFoundException("PlayList does not exists");
         }
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updatePlayList(@PathVariable int id, @Valid @RequestBody PlayList playList){
-        if (playListService.getPlayListId(id) == null){
-            return ResponseEntity.notFound().build();
+    @ApiOperation("Remove a song from playlist in the system")
+    ResponseEntity<PlayList> updatePlayList(
+            @ApiParam(value = "Id of the playlist to be updated", example = "12", required = true)
+            @PathVariable int id,
+            @ApiParam(value = "name of the song to be removed", example = "12", required = true)
+            @Valid @RequestBody String name){
+
+        Optional<PlayList> list = playListService.getPlayListId(id);
+        if (!list.isPresent()){
+            throw new ResourceNotFoundException("PlayList does not exists");
         }else {
-            log.info("Request to update playList: {}", playList);
+            log.info("Request to update playList: {}", list.get());
             try {
+                PlayList playList = list.get();
+                List list1 =  playList.getSongs();
+                list1.remove(songService.getSong(name));
+                playList.setSongs(list1);
                 PlayList result = playListService.save(playList);
                 return ResponseEntity.ok().body(result);
             }catch (Exception e){
-                return ResponseEntity.badRequest().body(e.getMessage());
+                throw new BadRequestException(e.getMessage());
             }
         }
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deletePlayList(@PathVariable int id){
+    @ApiOperation("Deletes a playlist in the system")
+    ResponseEntity<?> deletePlayList(
+            @ApiParam(value = "Id of the playlist to be deleted", example = "12", required = true)
+            @PathVariable int id){
         log.info("Request to delete playList: {}", id);
         playListService.deletePlayList(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Playlist successfully deleted");
     }
 }

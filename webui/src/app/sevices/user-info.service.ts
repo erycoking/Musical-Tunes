@@ -38,7 +38,6 @@ export class UserInfoService {
       if (userInfoString) {
         const userInfoObj: LoginInfoInStorage = JSON.parse(userInfoString);
         const userObj: UserInStorage = userInfoObj.user;
-        console.log(userObj);
         return userObj;
       } else {
         return null;
