@@ -5,7 +5,7 @@ import { Routes } from '@angular/router';
 import {AuthGuard} from './sevices/auth-guard.service';
 import {LoginComponent} from './components/login/login.component';
 
-const appRouter: Routes = [
+export const appRouter: Routes = [
   {
     path: '',
     redirectTo: 'login',
@@ -31,4 +31,3 @@ const appRouter: Routes = [
   { path: '**', component: PageNotFoundComponent }
 ];
 
-export default appRouter;

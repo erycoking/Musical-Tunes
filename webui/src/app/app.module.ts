@@ -14,7 +14,7 @@ import { AppComponent } from './app.component';
 import { SongComponent } from './components/song/song.component';
 import { AlbumComponent } from './components/album/album.component';
 import { RouterModule, Routes } from '@angular/router';
-import appRouter from './routes';
+import { appRouter } from './routes';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { LoginComponent } from './components/login/login.component';
 

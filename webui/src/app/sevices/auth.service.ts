@@ -35,9 +35,9 @@ export class AuthService {
             landingPage: 'songs',
             message: 'Login success',
             user: {
-              displayName: data.displayName,
+              displayName: data.user.name,
               token: data.token,
-              username: data.username
+              username: data.user.email
             }
           };
           this.userInfo.storeUserInfo(JSON.stringify(loginInfoReturn));

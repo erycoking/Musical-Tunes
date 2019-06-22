@@ -12,8 +12,7 @@ import { Component, OnInit } from '@angular/core';
 export class SongComponent implements OnInit {
 
   allSongs: Song[];
-  song: { any };
-  newSong = new Song();
+  song = new Song();
   newArtist = new Artist();
   albums: Album[];
   newAlbum = new Album();
@@ -55,9 +54,9 @@ export class SongComponent implements OnInit {
   getSingleSong(id: number) {
     this.songService.getSong(id).subscribe(
       res => {
-        this.newSong = res;
+        this.song = res;
         this.newArtist = new Artist();
-        this.newArtist.artistName = this.newSong.artist.artistName;
+        this.newArtist.artistName = this.song.artist.artistName;
       },
       err => this.displayError(err)
     );
@@ -85,7 +84,7 @@ export class SongComponent implements OnInit {
   reset() {
     this.newAlbum = new Album();
     this.newArtist = new Artist();
-    this.newSong = new Song();
+    this.song = new Song();
 
     this.getAllSongs();
   }
